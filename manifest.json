@@ -1,0 +1,13 @@
+{
+  "background_color": "#1e3c72",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "سامانه هواشناسی هوشمند",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "هواشناسی",
+  "start_url": "/",
+  "theme_color": "#1e3c72",
+  "description": "نمایش وضعیت آب و هوا و دمای شهرهای مختلف",
+  "id": "سامانه هواشناسی هوشمند"
+}
