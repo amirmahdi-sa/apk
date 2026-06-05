@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>سامانه هواشناسی هوشمند</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: tahoma;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+        }
+
+        .container {
+
+            width: 380px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            background: rgba(255, 255, 255, .12);
+
+            backdrop-filter: blur(20px);
+
+            border-radius: 30px;
+
+            border: 1px solid rgba(255, 255, 255, .15);
+
+            box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
+        }
+
+        h1 {
+
+            color: #4fc3f7;
+
+            margin-bottom: 25px;
+
+            font-size: 30px;
+        }
+
+        input {
+
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            background: rgba(255, 255, 255, .15);
+
+            color: white;
+
+            text-align: center;
+
+            font-size: 17px;
+
+            outline: none;
+
+            margin-bottom: 15px;
+        }
+
+        input::placeholder {
+            color: #ddd;
+        }
+
+        button {
+
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 15px;
+
+            cursor: pointer;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            color: white;
+
+            background: linear-gradient(135deg,
+                    #00c6ff,
+                    #0072ff);
+
+            transition: .3s;
+        }
+
+        button:hover {
+
+            transform: translateY(-3px);
+
+            box-shadow: 0 10px 25px rgba(0, 114, 255, .5);
+        }
+
+        #weatherIcon {
+
+            font-size: 90px;
+
+            margin-top: 25px;
+
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-12px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        #temp {
+
+            margin-top: 15px;
+
+            font-size: 70px;
+
+            font-weight: bold;
+
+            color: #ffd54f;
+
+            text-shadow: 0 0 20px rgba(255, 213, 79, .7);
+        }
+
+        #desc {
+
+            margin-top: 15px;
+
+            font-size: 24px;
+
+            line-height: 1.8;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🌤 سامانه هواشناسی هوشمند</h1>
+
+        <input type="text" id="city" placeholder="نام شهر را بنویسید">
+
+        <button onclick="getWeather()">
+            بررسی وضعیت آب و هوا
+        </button>
+
+        <div id="weatherIcon">🌤️</div>
+
+        <div id="temp"></div>
+
+        <div id="desc"></div>
+
+    </div>
+
+    <script>
+
+        async function getWeather() {
+
+            const city =
+                document.getElementById("city").value.trim();
+
+            const tempBox =
+                document.getElementById("temp");
+
+            const descBox =
+                document.getElementById("desc");
+
+            const icon =
+                document.getElementById("weatherIcon");
+
+            if (!city) {
+
+                descBox.innerText =
+                    "لطفاً نام شهر را وارد کنید!";
+
+                tempBox.innerText = "";
+
+                return;
+            }
+
+            const apiKey =
+                "7b2638cff570a4e94c058129d84c4eab";
+
+            const url =
+                `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+            try {
+
+                const response =
+                    await fetch(url);
+
+                const data =
+                    await response.json();
+
+                if (data.cod != 200) {
+
+                    tempBox.innerText = "";
+
+                    descBox.innerText =
+                        "شهر پیدا نشد";
+
+                    return;
+                }
+
+                const temp =
+                    Math.round(data.main.temp);
+
+                const desc =
+                    data.weather[0].main;
+
+                const iconCode =
+                    data.weather[0].icon;
+
+                const isNight =
+                    iconCode.endsWith("n");
+
+                let weatherFa = "";
+
+                if (desc === "Clear") {
+
+                    weatherFa =
+                        isNight
+                            ? "آسمان مهتابی و صاف"
+                            : "آسمان آفتابی و صاف";
+
+                    icon.innerHTML =
+                        isNight ? "🌙" : "☀️";
+                }
+
+                else if (desc === "Clouds") {
+
+                    weatherFa =
+                        isNight
+                            ? "هوای ابری در شب"
+                            : "هوای ابری";
+
+                    icon.innerHTML = "☁️";
+                }
+
+                else if (desc === "Rain") {
+
+                    weatherFa =
+                        isNight
+                            ? "بارش باران شبانه"
+                            : "بارش باران";
+
+                    icon.innerHTML = "🌧️";
+                }
+
+                else if (desc === "Snow") {
+
+                    weatherFa = "بارش برف";
+
+                    icon.innerHTML = "❄️";
+                }
+
+                else if (desc === "Thunderstorm") {
+
+                    weatherFa = "رعد و برق";
+
+                    icon.innerHTML = "⚡";
+                }
+
+                else if (desc === "Drizzle") {
+
+                    weatherFa = "نم باران";
+
+                    icon.innerHTML = "🌦️";
+                }
+
+                else if (desc === "Mist") {
+
+                    weatherFa = "هوای مه آلود";
+
+                    icon.innerHTML = "🌫️";
+                }
+
+                else {
+
+                    weatherFa = desc;
+
+                    icon.innerHTML = "🌍";
+                }
+
+                tempBox.innerText =
+                    `${temp}°C`;
+
+                descBox.innerText =
+                    `وضعیت هوا: ${weatherFa}`;
+
+            }
+
+            catch {
+
+                tempBox.innerText = "";
+
+                descBox.innerText =
+                    "خطا در دریافت اطلاعات";
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
